@@ -30,6 +30,19 @@ use Inovector\Mixpost\Http\Controllers\SchedulePostController;
 use Inovector\Mixpost\Http\Controllers\ServicesController;
 use Inovector\Mixpost\Http\Controllers\SettingsController;
 use Inovector\Mixpost\Http\Controllers\TagsController;
+use Inovector\Mixpost\Http\Controllers\VariablesController;
+use Inovector\Mixpost\Http\Controllers\HashtagGroupsController;
+use Inovector\Mixpost\Http\Controllers\PostTemplatesController;
+use Inovector\Mixpost\Http\Controllers\PostingScheduleController;
+use Inovector\Mixpost\Http\Controllers\AIAssistantController;
+use Inovector\Mixpost\Http\Controllers\AnalyticsController;
+use Inovector\Mixpost\Http\Controllers\PostActivityController;
+use Inovector\Mixpost\Http\Controllers\ApprovalController;
+use Inovector\Mixpost\Http\Controllers\TranslationController;
+use Inovector\Mixpost\Http\Controllers\WebhookController;
+use Inovector\Mixpost\Http\Controllers\ApiTokenController;
+use Inovector\Mixpost\Http\Controllers\BrandingController;
+use Inovector\Mixpost\Http\Controllers\WorkspaceController;
 use Inovector\Mixpost\Http\Middleware\Auth as MixpostAuthMiddleware;
 use Inovector\Mixpost\Http\Middleware\HandleInertiaRequests;
 
@@ -91,10 +104,153 @@ Route::middleware([
             Route::delete('{tag}', [TagsController::class, 'destroy'])->name('delete');
         });
 
+        Route::prefix('variables')->name('variables.')->group(function () {
+            Route::get('/', [VariablesController::class, 'index'])->name('index');
+            Route::post('/', [VariablesController::class, 'store'])->name('store');
+            Route::put('{variable}', [VariablesController::class, 'update'])->name('update');
+            Route::delete('{variable}', [VariablesController::class, 'destroy'])->name('delete');
+            Route::get('all', [VariablesController::class, 'all'])->name('all');
+            Route::post('preview', [VariablesController::class, 'preview'])->name('preview');
+        });
+
+        Route::prefix('hashtag-groups')->name('hashtagGroups.')->group(function () {
+            Route::get('/', [HashtagGroupsController::class, 'index'])->name('index');
+            Route::post('/', [HashtagGroupsController::class, 'store'])->name('store');
+            Route::put('{hashtagGroup}', [HashtagGroupsController::class, 'update'])->name('update');
+            Route::delete('{hashtagGroup}', [HashtagGroupsController::class, 'destroy'])->name('delete');
+            Route::get('all', [HashtagGroupsController::class, 'all'])->name('all');
+        });
+
+        Route::prefix('templates')->name('templates.')->group(function () {
+            Route::get('/', [PostTemplatesController::class, 'index'])->name('index');
+            Route::post('/', [PostTemplatesController::class, 'store'])->name('store');
+            Route::put('{postTemplate}', [PostTemplatesController::class, 'update'])->name('update');
+            Route::delete('{postTemplate}', [PostTemplatesController::class, 'destroy'])->name('delete');
+            Route::get('all', [PostTemplatesController::class, 'all'])->name('all');
+            Route::post('save-from-post', [PostTemplatesController::class, 'saveFromPost'])->name('saveFromPost');
+        });
+
+        Route::prefix('schedule')->name('schedule.')->group(function () {
+            Route::get('/', [PostingScheduleController::class, 'index'])->name('index');
+            Route::post('time-slot', [PostingScheduleController::class, 'addTimeSlot'])->name('addTimeSlot');
+            Route::delete('time-slot/{time}', [PostingScheduleController::class, 'removeTimeSlot'])->name('removeTimeSlot');
+            Route::put('time-slot/{time}/toggle', [PostingScheduleController::class, 'toggleTimeSlot'])->name('toggleTimeSlot');
+            Route::post('queue', [PostingScheduleController::class, 'addToQueue'])->name('addToQueue');
+            Route::delete('queue/{queueItem}', [PostingScheduleController::class, 'removeFromQueue'])->name('removeFromQueue');
+            Route::put('queue/reorder', [PostingScheduleController::class, 'reorderQueue'])->name('reorderQueue');
+            Route::put('queue/{queueItem}/retry', [PostingScheduleController::class, 'retryQueueItem'])->name('retryQueueItem');
+            Route::get('stats', [PostingScheduleController::class, 'stats'])->name('stats');
+        });
+
+        Route::prefix('ai')->name('ai.')->group(function () {
+            Route::post('generate', [AIAssistantController::class, 'generate'])->name('generate');
+            Route::post('rewrite', [AIAssistantController::class, 'rewrite'])->name('rewrite');
+            Route::post('summarize', [AIAssistantController::class, 'summarize'])->name('summarize');
+            Route::post('hashtags', [AIAssistantController::class, 'hashtags'])->name('hashtags');
+            Route::post('ideas', [AIAssistantController::class, 'ideas'])->name('ideas');
+            Route::post('optimize', [AIAssistantController::class, 'optimize'])->name('optimize');
+            Route::get('status', [AIAssistantController::class, 'status'])->name('status');
+            Route::get('stats', [AIAssistantController::class, 'stats'])->name('stats');
+        });
+
+        Route::prefix('analytics')->name('analytics.')->group(function () {
+            Route::get('/', [AnalyticsController::class, 'index'])->name('index');
+            Route::get('chart-data', [AnalyticsController::class, 'chartData'])->name('chartData');
+            Route::get('export', [AnalyticsController::class, 'export'])->name('export');
+        });
+
+        Route::prefix('activity')->name('activity.')->group(function () {
+            Route::get('recent', [PostActivityController::class, 'recent'])->name('recent');
+            Route::get('stats', [PostActivityController::class, 'stats'])->name('stats');
+            Route::get('posts/{post}', [PostActivityController::class, 'index'])->name('post');
+        });
+
+        Route::prefix('approvals')->name('approvals.')->group(function () {
+            Route::get('/', [ApprovalController::class, 'index'])->name('index');
+            Route::post('posts/{post}/request', [ApprovalController::class, 'request'])->name('request');
+            Route::post('{approval}/approve', [ApprovalController::class, 'approve'])->name('approve');
+            Route::post('{approval}/reject', [ApprovalController::class, 'reject'])->name('reject');
+            Route::delete('{approval}/cancel', [ApprovalController::class, 'cancel'])->name('cancel');
+            
+            // Workflows
+            Route::get('workflows', [ApprovalController::class, 'workflows'])->name('workflows');
+            Route::post('workflows', [ApprovalController::class, 'storeWorkflow'])->name('workflows.store');
+            Route::put('workflows/{workflow}', [ApprovalController::class, 'updateWorkflow'])->name('workflows.update');
+            Route::delete('workflows/{workflow}', [ApprovalController::class, 'deleteWorkflow'])->name('workflows.delete');
+            Route::post('workflows/{workflow}/default', [ApprovalController::class, 'setDefault'])->name('workflows.default');
+        });
+
+        Route::prefix('translations')->name('translations.')->group(function () {
+            Route::get('/', [TranslationController::class, 'languages'])->name('index');
+            Route::get('languages', [TranslationController::class, 'languages'])->name('languages');
+            Route::post('languages', [TranslationController::class, 'storeLanguage'])->name('languages.store');
+            Route::put('languages/{language}', [TranslationController::class, 'updateLanguage'])->name('languages.update');
+            Route::delete('languages/{language}', [TranslationController::class, 'destroyLanguage'])->name('languages.destroy');
+            Route::post('languages/{language}/default', [TranslationController::class, 'setDefault'])->name('languages.setDefault');
+            
+            Route::get('posts/{post}', [TranslationController::class, 'getPostTranslations'])->name('post');
+            Route::post('posts/{post}', [TranslationController::class, 'saveTranslation'])->name('post.save');
+            Route::post('posts/{post}/auto', [TranslationController::class, 'autoTranslate'])->name('post.auto');
+            Route::delete('posts/{post}/{languageCode}', [TranslationController::class, 'deleteTranslation'])->name('post.delete');
+            
+            Route::post('translate', [TranslationController::class, 'translateText'])->name('text');
+        });
+
         Route::prefix('settings')->name('settings.')->group(function () {
             Route::get('/', [SettingsController::class, 'index'])->name('index');
             Route::put('/', [SettingsController::class, 'update'])->name('update');
         });
+
+        // Phase 5: Webhooks
+        Route::prefix('webhooks')->name('webhooks.')->group(function () {
+            Route::get('/', [WebhookController::class, 'index'])->name('index');
+            Route::post('/', [WebhookController::class, 'store'])->name('store');
+            Route::put('{webhook}', [WebhookController::class, 'update'])->name('update');
+            Route::delete('{webhook}', [WebhookController::class, 'destroy'])->name('destroy');
+            Route::post('{webhook}/toggle', [WebhookController::class, 'toggle'])->name('toggle');
+            Route::post('{webhook}/test', [WebhookController::class, 'test'])->name('test');
+            Route::get('{webhook}/deliveries', [WebhookController::class, 'deliveries'])->name('deliveries');
+            Route::post('deliveries/{delivery}/retry', [WebhookController::class, 'retry'])->name('retry');
+        });
+
+        // Phase 5: API Tokens
+        Route::prefix('api-tokens')->name('apiTokens.')->group(function () {
+            Route::get('/', [ApiTokenController::class, 'index'])->name('index');
+            Route::post('/', [ApiTokenController::class, 'store'])->name('store');
+            Route::put('{token}', [ApiTokenController::class, 'update'])->name('update');
+            Route::delete('{token}', [ApiTokenController::class, 'destroy'])->name('destroy');
+            Route::post('{token}/regenerate', [ApiTokenController::class, 'regenerate'])->name('regenerate');
+            Route::get('{token}/stats', [ApiTokenController::class, 'stats'])->name('stats');
+        });
+
+        // Phase 5: Branding
+        Route::prefix('branding')->name('branding.')->group(function () {
+            Route::get('/', [BrandingController::class, 'index'])->name('index');
+            Route::put('/', [BrandingController::class, 'update'])->name('update');
+            Route::post('logo-light', [BrandingController::class, 'uploadLogoLight'])->name('logoLight');
+            Route::post('logo-dark', [BrandingController::class, 'uploadLogoDark'])->name('logoDark');
+            Route::post('favicon', [BrandingController::class, 'uploadFavicon'])->name('favicon');
+            Route::post('login-background', [BrandingController::class, 'uploadLoginBackground'])->name('loginBackground');
+            Route::delete('image', [BrandingController::class, 'removeImage'])->name('removeImage');
+            Route::post('reset', [BrandingController::class, 'reset'])->name('reset');
+            Route::get('css', [BrandingController::class, 'previewCss'])->name('css');
+        });
+
+        // Phase 5: Workspaces
+        Route::prefix('workspaces')->name('workspaces.')->group(function () {
+            Route::get('/', [WorkspaceController::class, 'index'])->name('index');
+            Route::post('/', [WorkspaceController::class, 'store'])->name('store');
+            Route::put('{workspace}', [WorkspaceController::class, 'update'])->name('update');
+            Route::delete('{workspace}', [WorkspaceController::class, 'destroy'])->name('destroy');
+            Route::post('{workspace}/switch', [WorkspaceController::class, 'switch'])->name('switch');
+            Route::get('{workspace}/members', [WorkspaceController::class, 'members'])->name('members');
+            Route::post('{workspace}/invite', [WorkspaceController::class, 'invite'])->name('invite');
+            Route::delete('{workspace}/members', [WorkspaceController::class, 'removeMember'])->name('removeMember');
+            Route::put('{workspace}/members/role', [WorkspaceController::class, 'updateRole'])->name('updateRole');
+            Route::post('{workspace}/leave', [WorkspaceController::class, 'leave'])->name('leave');
+        });
+
+        Route::get('workspaces/invite/{token}', [WorkspaceController::class, 'acceptInvite'])->name('workspaces.acceptInvite');
 
         Route::prefix('services')->name('services.')->group(function () {
             Route::get('/', [ServicesController::class, 'index'])->name('index');

@@ -7,6 +7,7 @@ use Illuminate\Support\Collection;
 use Inovector\Mixpost\Models\Account;
 use Inovector\Mixpost\Models\Media;
 use Inovector\Mixpost\Models\Post;
+use Inovector\Mixpost\Support\VariableProcessor;
 
 class PostContentParser
 {
@@ -64,8 +65,10 @@ class PostContentParser
         }
 
         $decode = html_entity_decode($result);
+        $stripped = strip_tags($decode);
 
-        return strip_tags($decode);
+        // Process variables (e.g., {date}, {time}, custom variables)
+        return VariableProcessor::process($stripped);
     }
 
     public function formatMedia(array $ids): Collection

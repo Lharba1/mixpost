@@ -14,7 +14,8 @@ class PostVersion extends Model
     protected $fillable = [
         'account_id',
         'is_original',
-        'content'
+        'content',
+        'first_comment',
     ];
 
     protected $casts = [

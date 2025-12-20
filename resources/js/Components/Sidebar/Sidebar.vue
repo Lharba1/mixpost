@@ -19,6 +19,9 @@ import InformationCircle from "../../Icons/InformationCircle.vue";
 import Document from "../../Icons/Document.vue";
 import ProLabel from "../Pro/ProLabel.vue";
 import UpgradePro from "../Pro/UpgradePro.vue";
+// New icons for Pro Features
+import Hashtag from "../../Icons/Hashtag.vue";
+import ChartBar from "../../Icons/ChartBar.vue";
 </script>
 <template>
     <div class="w-full h-full flex flex-col py-2xl bg-white border-r border-gray-200">
@@ -74,6 +77,100 @@ import UpgradePro from "../Pro/UpgradePro.vue";
                         <PhotoIcon/>
                     </template>
                     Media Library
+                </MenuItem>
+            </MenuGroupBody>
+            <MenuDelimiter/>
+            <!-- Pro Features Section -->
+            <MenuGroupHeader>
+                Pro Features
+            </MenuGroupHeader>
+            <MenuGroupBody>
+                <MenuItem :url="route('mixpost.analytics.index')" :active="$page.component === 'Analytics'">
+                    <template #icon>
+                        <ChartBar/>
+                    </template>
+                    Analytics
+                </MenuItem>
+                <MenuItem :url="route('mixpost.schedule.index')" :active="$page.component === 'PostingSchedule'">
+                    <template #icon>
+                        <QueueList/>
+                    </template>
+                    Posting Schedule
+                </MenuItem>
+                <MenuItem :url="route('mixpost.variables.index')" :active="$page.component === 'Variables'">
+                    <template #icon>
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M4 7v10c0 2.21 3.582 4 8 4s8-1.79 8-4V7M4 7c0 2.21 3.582 4 8 4s8-1.79 8-4M4 7c0-2.21 3.582-4 8-4s8 1.79 8 4"/>
+                        </svg>
+                    </template>
+                    Variables
+                </MenuItem>
+                <MenuItem :url="route('mixpost.hashtagGroups.index')" :active="$page.component === 'HashtagGroups'">
+                    <template #icon>
+                        <Hashtag/>
+                    </template>
+                    Hashtag Groups
+                </MenuItem>
+                <MenuItem :url="route('mixpost.templates.index')" :active="$page.component === 'PostTemplates'">
+                    <template #icon>
+                        <Document/>
+                    </template>
+                    Post Templates
+                </MenuItem>
+                <MenuItem :url="route('mixpost.approvals.index')" :active="$page.component === 'Approvals'">
+                    <template #icon>
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                        </svg>
+                    </template>
+                    Approvals
+                </MenuItem>
+                <MenuItem :url="route('mixpost.translations.index')" :active="$page.component === 'Translations'">
+                    <template #icon>
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M3 5h12M9 3v2m1.048 9.5A18.022 18.022 0 016.412 9m6.088 9h7M11 21l5-10 5 10M12.751 5C11.783 10.77 8.07 15.61 3 18.129"/>
+                        </svg>
+                    </template>
+                    Languages
+                </MenuItem>
+            </MenuGroupBody>
+            <MenuDelimiter/>
+            <!-- Enterprise Section -->
+            <MenuGroupHeader>
+                Enterprise
+            </MenuGroupHeader>
+            <MenuGroupBody>
+                <MenuItem :url="route('mixpost.workspaces.index')" :active="$page.component === 'Workspaces'">
+                    <template #icon>
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"/>
+                        </svg>
+                    </template>
+                    Workspaces
+                </MenuItem>
+                <MenuItem :url="route('mixpost.webhooks.index')" :active="$page.component === 'Webhooks'">
+                    <template #icon>
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1"/>
+                        </svg>
+                    </template>
+                    Webhooks
+                </MenuItem>
+                <MenuItem :url="route('mixpost.apiTokens.index')" :active="$page.component === 'ApiTokens'">
+                    <template #icon>
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M15 7a2 2 0 012 2m4 0a6 6 0 01-7.743 5.743L11 17H9v2H7v2H4a1 1 0 01-1-1v-2.586a1 1 0 01.293-.707l5.964-5.964A6 6 0 1121 9z"/>
+                        </svg>
+                    </template>
+                    API Tokens
+                </MenuItem>
+                <MenuItem :url="route('mixpost.branding.index')" :active="$page.component === 'Branding'">
+                    <template #icon>
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M7 21a4 4 0 01-4-4V5a2 2 0 012-2h4a2 2 0 012 2v12a4 4 0 01-4 4zm0 0h12a2 2 0 002-2v-4a2 2 0 00-2-2h-2.343M11 7.343l1.657-1.657a2 2 0 012.828 0l2.829 2.829a2 2 0 010 2.828l-8.486 8.485M7 17h.01"/>
+                        </svg>
+                    </template>
+                    White Label
                 </MenuItem>
             </MenuGroupBody>
             <MenuDelimiter/>
@@ -136,12 +233,8 @@ import UpgradePro from "../Pro/UpgradePro.vue";
             <MenuDelimiter/>
             <div class="flex flex-col items-start px-xl mt-sm">
                 <div class="text-sm text-gray-500 mb-xs">Lite version: {{ $page.props.mixpost.version }}</div>
-                <UpgradePro>
-                    <template #trigger>
-                        <ProLabel name="Unlock Pro Features" icon="lock-open"/>
-                    </template>
-                </UpgradePro>
             </div>
         </div>
     </div>
 </template>
+

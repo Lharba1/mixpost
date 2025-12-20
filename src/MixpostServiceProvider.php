@@ -12,6 +12,7 @@ use Inovector\Mixpost\Commands\DeleteOldData;
 use Inovector\Mixpost\Commands\ImportAccountAudience;
 use Inovector\Mixpost\Commands\ImportAccountData;
 use Inovector\Mixpost\Commands\ProcessMetrics;
+use Inovector\Mixpost\Commands\ProcessQueue;
 use Inovector\Mixpost\Commands\PruneTemporaryDirectory;
 use Inovector\Mixpost\Commands\PublishAssetsCommand;
 use Inovector\Mixpost\Commands\RunScheduledPosts;
@@ -47,6 +48,7 @@ class MixpostServiceProvider extends PackageServiceProvider
                 ClearSettingsCache::class,
                 ClearServicesCache::class,
                 RunScheduledPosts::class,
+                ProcessQueue::class,
                 ImportAccountAudience::class,
                 ImportAccountData::class,
                 ProcessMetrics::class,
