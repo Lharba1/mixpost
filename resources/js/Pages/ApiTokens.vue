@@ -161,11 +161,11 @@ const toggleAbility = (ability) => {
 
         <!-- Create Modal -->
         <DialogModal :show="showCreateModal" @close="!newToken && (showCreateModal = false)">
-            <template #title>
+            <template #header>
                 {{ newToken ? 'Token Created!' : 'Create API Token' }}
             </template>
 
-            <template #content>
+            <template #body>
                 <template v-if="newToken">
                     <Alert variant="warning" class="mb-4">
                         Copy this token now. You won't be able to see it again!
