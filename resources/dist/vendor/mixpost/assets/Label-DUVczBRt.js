@@ -1,0 +1,1 @@
+import{c as e,o as t,t as o,y as l}from"./app-BHV5s-F7.js";const n={class:"block font-medium text-gray-700 mb-xs"},c={key:0},r={key:1},m={__name:"Label",props:["value"],setup(s){return(a,_)=>(t(),e("label",n,[s.value?(t(),e("span",c,o(s.value),1)):(t(),e("span",r,[l(a.$slots,"default")]))]))}};export{m as _};

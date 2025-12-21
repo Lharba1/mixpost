@@ -20,6 +20,7 @@ import RectangleGroup from "../../Icons/RectangleGroup.vue";
 import ProEditorButton from "../Pro/ProEditorButton.vue";
 import PostContentValidator from "./PostContentValidator.vue";
 import FirstCommentEditor from "./FirstCommentEditor.vue";
+import AIAssistantModal from "./AIAssistantModal.vue";
 import Sparkles from "../../Icons/Sparkles.vue";
 
 const props = defineProps({
@@ -178,6 +179,22 @@ const updateFirstComment = (value) => {
         props.form.versions[versionIndex].first_comment = value;
     }
 };
+
+// AI Assistant
+const showAIModal = ref(false);
+
+const getCurrentContent = () => {
+    const versionContent = getAccountVersion(props.form.versions, activeVersion.value)?.content;
+    return versionContent?.[0]?.body || '';
+};
+
+const applyAIResult = (newContent) => {
+    const versionIndex = getIndexAccountVersion(props.form.versions, activeVersion.value);
+    if (versionIndex >= 0) {
+        props.form.versions[versionIndex].content[0].body = newContent;
+    }
+    showAIModal.value = false;
+};
 </script>
 <template>
     <div class="flex flex-wrap items-center gap-sm mb-lg">
@@ -239,7 +256,7 @@ const updateFirstComment = (value) => {
                                 <RectangleGroup/>
                             </ProEditorButton>
 
-                            <ProEditorButton tooltip="AI Assistant">
+                            <ProEditorButton tooltip="AI Assistant" @click="showAIModal = true">
                                 <Sparkles/>
                             </ProEditorButton>
                         </Flex>
@@ -274,4 +291,12 @@ const updateFirstComment = (value) => {
                 :versions="form.versions"/>
         </template>
     </Panel>
+
+    <!-- AI Assistant Modal -->
+    <AIAssistantModal 
+        :show="showAIModal" 
+        :currentContent="getCurrentContent()"
+        @close="showAIModal = false"
+        @apply="applyAIResult"
+    />
 </template>
