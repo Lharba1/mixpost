@@ -46,16 +46,37 @@ class AccountPublishPost
 
         // Post first comment if available
         $firstComment = $parser->getFirstComment();
+        
+        Log::info('First comment check for post ' . $post->id, [
+            'has_first_comment' => !empty($firstComment),
+            'first_comment_preview' => substr($firstComment ?? '', 0, 50),
+            'response_id' => $response->id ?? null,
+            'account_provider' => $account->provider,
+        ]);
+        
         if (!empty($firstComment) && $response->id) {
             try {
                 // Check if provider supports first comments (Facebook, Instagram)
                 if (method_exists($provider, 'postFirstComment')) {
+                    Log::info('Attempting first comment for post ' . $post->id, [
+                        'post_id_used' => $response->id,
+                        'comment_length' => strlen($firstComment),
+                    ]);
+                    
                     $commentResponse = $provider->postFirstComment($response->id, $firstComment);
+                    
+                    Log::info('First comment result for post ' . $post->id, [
+                        'success' => !$commentResponse->hasError(),
+                        'error' => $commentResponse->hasError() ? $commentResponse->context() : null,
+                    ]);
+                    
                     if ($commentResponse->hasError()) {
                         Log::warning('First comment failed for post ' . $post->id, [
                             'error' => $commentResponse->context()
                         ]);
                     }
+                } else {
+                    Log::info('Provider does not support first comments: ' . $account->provider);
                 }
             } catch (\Exception $e) {
                 Log::warning('First comment exception for post ' . $post->id, [
