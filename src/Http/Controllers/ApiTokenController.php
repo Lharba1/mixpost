@@ -14,32 +14,41 @@ class ApiTokenController extends Controller
      */
     public function index(Request $request)
     {
-        $tokens = ApiToken::where('user_id', auth()->id())
-            ->withCount('logs')
-            ->orderByDesc('created_at')
-            ->get()
-            ->map(function ($token) {
-                return [
-                    'id' => $token->id,
-                    'name' => $token->name,
-                    'masked_token' => $token->masked_token,
-                    'abilities' => $token->abilities,
-                    'is_active' => $token->is_active,
-                    'last_used_at' => $token->last_used_at?->diffForHumans(),
-                    'expires_at' => $token->expires_at?->format('M j, Y'),
-                    'created_at' => $token->created_at->format('M j, Y'),
-                    'logs_count' => $token->logs_count,
-                ];
-            });
+        try {
+            $tokens = ApiToken::where('user_id', auth()->id())
+                ->orderByDesc('created_at')
+                ->get()
+                ->map(function ($token) {
+                    return [
+                        'id' => $token->id,
+                        'name' => $token->name,
+                        'masked_token' => $token->masked_token,
+                        'abilities' => $token->abilities ?? [],
+                        'is_active' => $token->is_active,
+                        'last_used_at' => $token->last_used_at?->diffForHumans(),
+                        'expires_at' => $token->expires_at?->format('M j, Y'),
+                        'created_at' => $token->created_at->format('M j, Y'),
+                        'logs_count' => 0,
+                    ];
+                });
 
-        if ($request->wantsJson()) {
-            return response()->json($tokens);
+            if ($request->wantsJson()) {
+                return response()->json($tokens);
+            }
+
+            return Inertia::render('ApiTokens', [
+                'tokens' => $tokens,
+                'available_abilities' => ApiToken::abilityLabels(),
+            ]);
+        } catch (\Exception $e) {
+            if ($request->wantsJson()) {
+                return response()->json(['error' => $e->getMessage()], 500);
+            }
+            return Inertia::render('ApiTokens', [
+                'tokens' => [],
+                'available_abilities' => ApiToken::abilityLabels(),
+            ]);
         }
-
-        return Inertia::render('ApiTokens', [
-            'tokens' => $tokens,
-            'available_abilities' => ApiToken::abilityLabels(),
-        ]);
     }
 
     /**
@@ -47,28 +56,41 @@ class ApiTokenController extends Controller
      */
     public function store(Request $request)
     {
-        $request->validate([
-            'name' => 'required|string|max:255',
-            'abilities' => 'nullable|array',
-            'abilities.*' => 'string',
-            'expires_at' => 'nullable|date|after:today',
-        ]);
+        try {
+            $request->validate([
+                'name' => 'required|string|max:255',
+                'abilities' => 'nullable|array',
+                'abilities.*' => 'string',
+                'expires_at' => 'nullable|date|after:today',
+            ]);
 
-        $token = ApiToken::generate(
-            $request->name,
-            auth()->id(),
-            $request->abilities ?? ApiToken::allAbilities()
-        );
+            $token = ApiToken::generate(
+                $request->name,
+                auth()->id(),
+                $request->abilities ?? ApiToken::allAbilities()
+            );
 
-        if ($request->expires_at) {
-            $token->update(['expires_at' => $request->expires_at]);
+            if ($request->expires_at) {
+                $token->update(['expires_at' => $request->expires_at]);
+            }
+
+            return response()->json([
+                'success' => true,
+                'token' => $token->token,
+                'message' => 'Token created. Copy it now, it won\'t be shown again.',
+            ]);
+        } catch (\Illuminate\Validation\ValidationException $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Validation failed',
+                'errors' => $e->errors(),
+            ], 422);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Failed to create token: ' . $e->getMessage(),
+            ], 500);
         }
-
-        return response()->json([
-            'success' => true,
-            'token' => $token->token, // Only time we show the full token!
-            'message' => 'Token created. Copy it now, it won\'t be shown again.',
-        ]);
     }
 
     /**
