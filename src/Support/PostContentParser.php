@@ -42,6 +42,28 @@ class PostContentParser
         return Arr::get($accountVersion->options ?? [], $this->account->provider, []);
     }
 
+    /**
+     * Get the first comment text for this version
+     */
+    public function getFirstComment(): ?string
+    {
+        $accountVersion = $this->post->versions->where('account_id', $this->account->id)->first();
+
+        if (empty($accountVersion)) {
+            $original = $this->post->versions->where('is_original', true)->first();
+            $firstComment = $original->first_comment ?? null;
+        } else {
+            $firstComment = $accountVersion->first_comment ?? null;
+        }
+
+        if (empty($firstComment)) {
+            return null;
+        }
+
+        // Format the first comment text
+        return $this->formatBody($firstComment);
+    }
+
     public function formatBody(?string $text): string
     {
         if (!$text) {

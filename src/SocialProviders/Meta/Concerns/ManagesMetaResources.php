@@ -195,6 +195,23 @@ trait ManagesMetaResources
         return $ids;
     }
 
+    /**
+     * Post a comment to a Facebook post
+     */
+    public function postComment(string $postId, string $message, string $accessToken): SocialProviderResponse
+    {
+        $response = Http::post("$this->apiUrl/$this->apiVersion/$postId/comments", [
+            'message' => $message,
+            'access_token' => $accessToken
+        ]);
+
+        return $this->buildResponse($response, function () use ($response) {
+            return [
+                'comment_id' => $response->json()['id'] ?? null
+            ];
+        });
+    }
+
     public function publishPost(string $text, Collection $media, array $params = []): SocialProviderResponse
     {
         return $this->response(SocialProviderResponseStatus::NO_CONTENT, []);

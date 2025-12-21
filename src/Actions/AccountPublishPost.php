@@ -8,6 +8,7 @@ use Inovector\Mixpost\Models\Account;
 use Inovector\Mixpost\Models\Post;
 use Inovector\Mixpost\Support\PostContentParser;
 use Inovector\Mixpost\Support\SocialProviderResponse;
+use Illuminate\Support\Facades\Log;
 
 class AccountPublishPost
 {
@@ -27,7 +28,9 @@ class AccountPublishPost
             return new SocialProviderResponse(SocialProviderResponseStatus::ERROR, $errors);
         }
 
-        $response = $this->connectProvider($account)->publishPost(
+        $provider = $this->connectProvider($account);
+        
+        $response = $provider->publishPost(
             text: $parser->formatBody($content[0]['body']),
             media: $parser->formatMedia($content[0]['media']),
             params: $parser->getVersionOptions()
@@ -40,6 +43,26 @@ class AccountPublishPost
         }
 
         $post->insertProviderData($account, $response);
+
+        // Post first comment if available
+        $firstComment = $parser->getFirstComment();
+        if (!empty($firstComment) && $response->id) {
+            try {
+                // Check if provider supports first comments (Facebook, Instagram)
+                if (method_exists($provider, 'postFirstComment')) {
+                    $commentResponse = $provider->postFirstComment($response->id, $firstComment);
+                    if ($commentResponse->hasError()) {
+                        Log::warning('First comment failed for post ' . $post->id, [
+                            'error' => $commentResponse->context()
+                        ]);
+                    }
+                }
+            } catch (\Exception $e) {
+                Log::warning('First comment exception for post ' . $post->id, [
+                    'error' => $e->getMessage()
+                ]);
+            }
+        }
 
         return $response;
     }

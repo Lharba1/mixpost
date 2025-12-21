@@ -63,6 +63,14 @@ trait ManagesFacebookPageResources
         return parent::publishFacebookPost($text, $media, $params, $this->getAccessToken()['page_access_token']);
     }
 
+    /**
+     * Post a first comment to a published post
+     */
+    public function postFirstComment(string $postId, string $message): SocialProviderResponse
+    {
+        return $this->postComment($postId, $message, $this->getAccessToken()['page_access_token']);
+    }
+
     public function getPageAudience(): SocialProviderResponse
     {
         $response = Http::get("$this->apiUrl/$this->apiVersion/{$this->values['provider_id']}", [
