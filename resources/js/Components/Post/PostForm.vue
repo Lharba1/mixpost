@@ -19,6 +19,7 @@ import Variable from "../../Icons/Variable.vue";
 import RectangleGroup from "../../Icons/RectangleGroup.vue";
 import ProEditorButton from "../Pro/ProEditorButton.vue";
 import PostContentValidator from "./PostContentValidator.vue";
+import FirstCommentEditor from "./FirstCommentEditor.vue";
 import Sparkles from "../../Icons/Sparkles.vue";
 
 const props = defineProps({
@@ -158,6 +159,25 @@ watch(() => props.form.accounts, () => {
 });
 
 const {insertEmoji, focusEditor} = useEditor();
+
+// First comment toggle
+const showFirstComment = ref(false);
+
+const toggleFirstComment = () => {
+    showFirstComment.value = !showFirstComment.value;
+};
+
+const getFirstComment = () => {
+    const version = getAccountVersion(props.form.versions, activeVersion.value);
+    return version?.first_comment || '';
+};
+
+const updateFirstComment = (value) => {
+    const versionIndex = getIndexAccountVersion(props.form.versions, activeVersion.value);
+    if (versionIndex >= 0) {
+        props.form.versions[versionIndex].first_comment = value;
+    }
+};
 </script>
 <template>
     <div class="flex flex-wrap items-center gap-sm mb-lg">
@@ -230,13 +250,22 @@ const {insertEmoji, focusEditor} = useEditor();
                                                :activeVersion="activeVersion"
                                                :activeContent="index"/>
 
-                           <ProEditorButton tooltip="Add first comment">
+                           <ProEditorButton tooltip="Add first comment" @click="toggleFirstComment">
                                <Plus/>
                            </ProEditorButton>
                        </Flex>
                     </Flex>
                 </template>
             </Editor>
+
+            <!-- First Comment Editor -->
+            <FirstCommentEditor 
+                v-show="showFirstComment"
+                :modelValue="getFirstComment()"
+                @update:modelValue="updateFirstComment"
+                :accountName="selectedAccounts.find(a => a.id === activeVersion)?.name || 'this account'"
+                class="mt-4"
+            />
 
             <PostContentValidator
                 :selectedAccounts="selectedAccounts"

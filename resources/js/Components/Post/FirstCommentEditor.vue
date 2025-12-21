@@ -4,7 +4,6 @@ import Textarea from "../Form/Textarea.vue";
 import Label from "../Form/Label.vue";
 import PureButton from "../Button/PureButton.vue";
 import ChevronDown from "../../Icons/ChevronDown.vue";
-import ChevronUp from "../../Icons/ChevronUp.vue";
 import ChatBubble from "../../Icons/ChatBubble.vue";
 
 const props = defineProps({
@@ -60,9 +59,9 @@ const characterCount = () => {
                 <span class="font-medium text-gray-700 dark:text-gray-300">First Comment</span>
                 <span v-if="modelValue" class="text-xs text-green-500">(Added)</span>
             </div>
-            <component 
-                :is="isExpanded ? ChevronUp : ChevronDown" 
-                class="w-4 h-4 text-gray-400"
+            <ChevronDown 
+                class="w-4 h-4 text-gray-400 transition-transform duration-200"
+                :class="{ 'rotate-180': isExpanded }"
             />
         </button>
         
