@@ -49,7 +49,7 @@ return new class extends Migration
             $table->string('source_hash', 64); // MD5/SHA hash for quick lookup
             $table->timestamps();
             
-            $table->index(['source_language', 'target_language', 'source_hash']);
+            $table->index(['source_language', 'target_language', 'source_hash'], 'translation_memory_lookup_idx');
         });
 
         // Seed default languages
