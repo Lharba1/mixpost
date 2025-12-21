@@ -41,14 +41,24 @@ const openCreate = () => {
 
 const createToken = async () => {
     try {
-        const response = await fetch(route('mixpost.apiTokens.store'), {
+        const csrfToken = document.querySelector('meta[name="csrf-token"]')?.content || 
+                          document.querySelector('input[name="_token"]')?.value || '';
+        
+        const response = await fetch('/mixpost/api-tokens', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
-                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
+                'Accept': 'application/json',
+                'X-CSRF-TOKEN': csrfToken,
+                'X-Requested-With': 'XMLHttpRequest',
             },
             body: JSON.stringify(form),
         });
+        
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        
         const data = await response.json();
         if (data.success) {
             newToken.value = data.token;
@@ -56,6 +66,7 @@ const createToken = async () => {
         }
     } catch (error) {
         console.error('Failed to create token:', error);
+        alert('Failed to create token. Please try again.');
     }
 };
 
