@@ -178,12 +178,21 @@ const toggleAbility = (ability) => {
                     <div class="space-y-4">
                         <div>
                             <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Token Name</label>
-                            <Input v-model="form.name" placeholder="My Integration" class="w-full" />
+                            <input 
+                                v-model="form.name" 
+                                type="text"
+                                placeholder="My Integration" 
+                                class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 dark:bg-gray-700 dark:text-white" 
+                            />
                         </div>
 
                         <div>
                             <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Expires At (optional)</label>
-                            <Input v-model="form.expires_at" type="date" class="w-full" />
+                            <input 
+                                v-model="form.expires_at" 
+                                type="date" 
+                                class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 dark:bg-gray-700 dark:text-white" 
+                            />
                         </div>
 
                         <div>
