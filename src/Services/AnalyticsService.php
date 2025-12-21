@@ -202,14 +202,28 @@ class AnalyticsService
             $query->where('account_id', $this->accountId);
         }
 
-        return [
-            'followers' => $query->clone()->where('type', 'followers')->sum('value'),
-            'impressions' => $query->clone()->where('type', 'impressions')->sum('value'),
-            'engagement' => $query->clone()->where('type', 'engagement')->sum('value'),
-            'likes' => $query->clone()->where('type', 'likes')->sum('value'),
-            'comments' => $query->clone()->where('type', 'comments')->sum('value'),
-            'shares' => $query->clone()->where('type', 'shares')->sum('value'),
+        $metrics = $query->get();
+        
+        // Aggregate metrics from the JSON 'data' column
+        $totals = [
+            'followers' => 0,
+            'impressions' => 0,
+            'engagement' => 0,
+            'likes' => 0,
+            'comments' => 0,
+            'shares' => 0,
         ];
+
+        foreach ($metrics as $metric) {
+            $data = $metric->data ?? [];
+            foreach ($totals as $key => $value) {
+                if (isset($data[$key])) {
+                    $totals[$key] += (int) $data[$key];
+                }
+            }
+        }
+
+        return $totals;
     }
 
     /**
