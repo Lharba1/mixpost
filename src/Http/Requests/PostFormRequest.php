@@ -16,6 +16,7 @@ class PostFormRequest extends FormRequest
             'date' => ['nullable', 'date', 'date_format:Y-m-d'],
             'time' => ['nullable', 'date_format:H:i'],
             'versions' => ['required', 'array', 'min:1'],
+            'versions.*.first_comment' => ['nullable', 'string', 'max:2000'],
             'versions.*.content.*.body' => ['nullable', 'string', 'max:5000'],
             'versions.*.content.*.media' => ['array'],
             'versions.*.content.*.media.*' => ['integer']
