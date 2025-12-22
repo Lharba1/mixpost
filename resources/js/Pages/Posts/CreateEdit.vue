@@ -113,6 +113,7 @@ const save = () => {
             return {
                 account_id: version.account_id,
                 is_original: version.is_original,
+                first_comment: version.first_comment || null,
                 content: version.content.map((item) => {
                     return {
                         body: item.body,
