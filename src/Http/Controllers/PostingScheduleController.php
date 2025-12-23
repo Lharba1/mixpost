@@ -26,6 +26,10 @@ class PostingScheduleController extends Controller
             $schedule->load('times'); // Load empty times relationship
         }
 
+        // Debug logging
+        \Log::info('PostingSchedule times count: ' . $schedule->times->count());
+        \Log::info('PostingSchedule times: ' . json_encode($schedule->times->toArray()));
+
         $queueItems = QueueItem::with(['post.versions', 'post.accounts', 'scheduleTime'])
             ->pending()
             ->ordered()
