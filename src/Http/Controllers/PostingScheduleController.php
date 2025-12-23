@@ -12,6 +12,7 @@ use Inovector\Mixpost\Http\Resources\PostingScheduleResource;
 use Inovector\Mixpost\Http\Resources\QueueItemResource;
 use Inovector\Mixpost\Models\PostingSchedule;
 use Inovector\Mixpost\Models\PostingScheduleTime;
+use Inovector\Mixpost\Models\Post;
 use Inovector\Mixpost\Models\QueueItem;
 
 class PostingScheduleController extends Controller
@@ -79,10 +80,12 @@ class PostingScheduleController extends Controller
     public function addToQueue(Request $request): HttpResponse
     {
         $validated = $request->validate([
-            'post_id' => 'required|exists:mixpost_posts,id',
+            'post_id' => 'required|exists:mixpost_posts,uuid',
             'schedule_time_id' => 'nullable|exists:mixpost_posting_schedule_times,id',
             'scheduled_at' => 'nullable|date',
         ]);
+
+        $post = Post::where('uuid', $validated['post_id'])->firstOrFail();
 
         $schedule = PostingSchedule::with('times')->first();
         
@@ -103,7 +106,7 @@ class PostingScheduleController extends Controller
         $maxPosition = QueueItem::pending()->max('position') ?? 0;
 
         $queueItem = QueueItem::create([
-            'post_id' => $validated['post_id'],
+            'post_id' => $post->id,
             'schedule_time_id' => $validated['schedule_time_id'] ?? null,
             'scheduled_at' => $scheduledAt,
             'position' => $maxPosition + 1,
