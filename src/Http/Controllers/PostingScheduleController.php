@@ -23,6 +23,7 @@ class PostingScheduleController extends Controller
         // Create default schedule if none exists
         if (!$schedule) {
             $schedule = PostingSchedule::create(['name' => 'Default Schedule']);
+            $schedule->load('times'); // Load empty times relationship
         }
 
         $queueItems = QueueItem::with(['post.versions', 'post.accounts', 'scheduleTime'])

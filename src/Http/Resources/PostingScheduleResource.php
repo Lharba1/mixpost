@@ -14,7 +14,7 @@ class PostingScheduleResource extends JsonResource
             'uuid' => $this->uuid,
             'name' => $this->name,
             'is_active' => $this->is_active,
-            'times' => PostingScheduleTimeResource::collection($this->whenLoaded('times')),
+            'times' => PostingScheduleTimeResource::collection($this->times),
             'times_by_day' => $this->times_by_day,
             'created_at' => $this->created_at?->toDateTimeString(),
         ];
