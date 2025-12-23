@@ -79,45 +79,49 @@ class PostingScheduleController extends Controller
      */
     public function addToQueue(Request $request): HttpResponse
     {
-        \Illuminate\Support\Facades\Log::info('addToQueue payload:', $request->all());
+        try {
+            \Illuminate\Support\Facades\Log::info('addToQueue payload:', $request->all());
 
-        $validated = $request->validate([
-            'post_id' => 'required', // Relaxed validation to debug "exists" rule
-            'schedule_time_id' => 'nullable|exists:mixpost_posting_schedule_times,id',
-            'scheduled_at' => 'nullable|date',
-        ]);
+            $validated = $request->validate([
+                'post_id' => 'required', // Relaxed validation to debug "exists" rule
+                'schedule_time_id' => 'nullable|exists:mixpost_posting_schedule_times,id',
+                'scheduled_at' => 'nullable|date',
+            ]);
 
-        $post = Post::where('uuid', $validated['post_id'])->firstOrFail();
+            $post = Post::where('uuid', $validated['post_id'])->firstOrFail();
 
-        $schedule = PostingSchedule::with('times')->first();
-        
-        $scheduledAt = null;
-        
-        if (!empty($validated['scheduled_at'])) {
-            $scheduledAt = $validated['scheduled_at'];
-        } elseif ($schedule && !empty($validated['schedule_time_id'])) {
-            $scheduleTime = PostingScheduleTime::find($validated['schedule_time_id']);
-            $scheduledAt = $schedule->getNextPublishDate($scheduleTime);
-        } elseif ($schedule) {
-            $nextSlot = $schedule->getNextAvailableSlot();
-            if ($nextSlot) {
-                $scheduledAt = $schedule->getNextPublishDate($nextSlot);
+            $schedule = PostingSchedule::with('times')->first();
+            
+            $scheduledAt = null;
+            
+            if (!empty($validated['scheduled_at'])) {
+                $scheduledAt = $validated['scheduled_at'];
+            } elseif ($schedule && !empty($validated['schedule_time_id'])) {
+                $scheduleTime = PostingScheduleTime::find($validated['schedule_time_id']);
+                $scheduledAt = $schedule->getNextPublishDate($scheduleTime);
+            } elseif ($schedule) {
+                $nextSlot = $schedule->getNextAvailableSlot();
+                if ($nextSlot) {
+                    $scheduledAt = $schedule->getNextPublishDate($nextSlot);
+                }
             }
+
+            $maxPosition = QueueItem::pending()->max('position') ?? 0;
+
+            $queueItem = QueueItem::create([
+                'post_id' => $post->id,
+                'schedule_time_id' => $validated['schedule_time_id'] ?? null,
+                'scheduled_at' => $scheduledAt,
+                'position' => $maxPosition + 1,
+                'status' => 'pending',
+            ]);
+
+            return response()->json([
+                'queue_item' => new QueueItemResource($queueItem),
+            ], 201);
+        } catch (\Throwable $e) {
+            return response()->json(['message' => 'Debug Error: ' . $e->getMessage()], 500);
         }
-
-        $maxPosition = QueueItem::pending()->max('position') ?? 0;
-
-        $queueItem = QueueItem::create([
-            'post_id' => $post->id,
-            'schedule_time_id' => $validated['schedule_time_id'] ?? null,
-            'scheduled_at' => $scheduledAt,
-            'position' => $maxPosition + 1,
-            'status' => 'pending',
-        ]);
-
-        return response()->json([
-            'queue_item' => new QueueItemResource($queueItem),
-        ], 201);
     }
 
     /**
