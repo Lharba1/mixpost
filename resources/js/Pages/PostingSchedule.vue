@@ -89,11 +89,19 @@ const retryQueueItem = (queueItemId) => {
 };
 
 const timesByDay = computed(() => {
-    if (!props.schedule.times) return {};
+    // Robustly handle times data structure
+    let times = [];
+    if (props.schedule.times) {
+        if (Array.isArray(props.schedule.times)) {
+            times = props.schedule.times;
+        } else if (Array.isArray(props.schedule.times.data)) {
+            times = props.schedule.times.data;
+        }
+    }
     
     const grouped = {};
     for (const [dayNum, dayName] of Object.entries(props.days)) {
-        grouped[dayNum] = props.schedule.times.filter(t => t.day_of_week === parseInt(dayNum));
+        grouped[dayNum] = times.filter(t => t.day_of_week === parseInt(dayNum));
     }
     return grouped;
 });
