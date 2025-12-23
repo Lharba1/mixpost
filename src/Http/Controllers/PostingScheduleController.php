@@ -119,8 +119,10 @@ class PostingScheduleController extends Controller
             return response()->json([
                 'queue_item' => new QueueItemResource($queueItem),
             ], 201);
+        } catch (\Exception $e) {
+             return response()->json(['message' => 'Debug Error (Exception): ' . $e->getMessage()], 500);
         } catch (\Throwable $e) {
-            return response()->json(['message' => 'Debug Error: ' . $e->getMessage()], 500);
+             return response()->json(['message' => 'Debug Error (Throwable): ' . $e->getMessage()], 500);
         }
     }
 
