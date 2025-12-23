@@ -79,8 +79,10 @@ class PostingScheduleController extends Controller
      */
     public function addToQueue(Request $request): HttpResponse
     {
+        \Illuminate\Support\Facades\Log::info('addToQueue payload:', $request->all());
+
         $validated = $request->validate([
-            'post_id' => 'required|exists:mixpost_posts,uuid',
+            'post_id' => 'required', // Relaxed validation to debug "exists" rule
             'schedule_time_id' => 'nullable|exists:mixpost_posting_schedule_times,id',
             'scheduled_at' => 'nullable|date',
         ]);
