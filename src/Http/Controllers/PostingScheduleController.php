@@ -26,6 +26,11 @@ class PostingScheduleController extends Controller
             $schedule->load('times'); // Load empty times relationship
         }
 
+        $queueItems = QueueItem::with(['post.versions', 'post.accounts', 'scheduleTime'])
+            ->pending()
+            ->ordered()
+            ->get();
+
         return Inertia::render('PostingSchedule', [
             'schedule' => new PostingScheduleResource($schedule),
             'queue_items' => QueueItemResource::collection($queueItems)->resolve(),
