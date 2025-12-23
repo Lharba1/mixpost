@@ -30,6 +30,9 @@ class PostingScheduleController extends Controller
         \Log::info('PostingSchedule times count: ' . $schedule->times->count());
         \Log::info('PostingSchedule times: ' . json_encode($schedule->times->toArray()));
 
+        $scheduleResource = new PostingScheduleResource($schedule);
+        \Log::info('PostingSchedule Resource: ' . json_encode($scheduleResource->resolve()));
+
         $queueItems = QueueItem::with(['post.versions', 'post.accounts', 'scheduleTime'])
             ->pending()
             ->ordered()
