@@ -56,7 +56,7 @@ class ProcessQueue extends Command
             }
         }
 
-        $this->info('Queue processing complete.');
+        $this->info('Queue processing complete.'); // Done
 
         return self::SUCCESS;
     }

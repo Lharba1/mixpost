@@ -80,10 +80,8 @@ class PostingScheduleController extends Controller
     public function addToQueue(Request $request): HttpResponse
     {
         try {
-            \Illuminate\Support\Facades\Log::info('addToQueue payload:', $request->all());
-
             $validated = $request->validate([
-                'post_id' => 'required', // Relaxed validation to debug "exists" rule
+                'post_id' => 'required',
                 'schedule_time_id' => 'nullable|exists:mixpost_posting_schedule_times,id',
                 'scheduled_at' => 'nullable|date',
             ]);
@@ -98,7 +96,9 @@ class PostingScheduleController extends Controller
                 $scheduledAt = $validated['scheduled_at'];
             } elseif ($schedule && !empty($validated['schedule_time_id'])) {
                 $scheduleTime = PostingScheduleTime::find($validated['schedule_time_id']);
-                $scheduledAt = $schedule->getNextPublishDate($scheduleTime);
+                if ($scheduleTime) {
+                    $scheduledAt = $schedule->getNextPublishDate($scheduleTime);
+                }
             } elseif ($schedule) {
                 $nextSlot = $schedule->getNextAvailableSlot();
                 if ($nextSlot) {
@@ -106,7 +106,7 @@ class PostingScheduleController extends Controller
                 }
             }
 
-            $maxPosition = QueueItem::pending()->max('position') ?? 0;
+            $maxPosition = QueueItem::pending()->max('position') ?: 0;
 
             $queueItem = QueueItem::create([
                 'post_id' => $post->id,
@@ -119,10 +119,11 @@ class PostingScheduleController extends Controller
             return response()->json([
                 'queue_item' => new QueueItemResource($queueItem),
             ], 201);
-        } catch (\Exception $e) {
-             return response()->json(['message' => 'Debug Error (Exception): ' . $e->getMessage()], 500);
+        } catch (\Illuminate\Validation\ValidationException $e) {
+            throw $e;
         } catch (\Throwable $e) {
-             return response()->json(['message' => 'Debug Error (Throwable): ' . $e->getMessage()], 500);
+             \Illuminate\Support\Facades\Log::error('addToQueue Error: ' . $e->getMessage());
+             return response()->json(['message' => 'Error: ' . $e->getMessage()], 500);
         }
     }
 
