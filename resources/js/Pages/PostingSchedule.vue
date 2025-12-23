@@ -92,12 +92,14 @@ const timesByDay = computed(() => {
     // Robustly handle times data structure
     let times = [];
     if (props.schedule.times) {
+        console.log('Raw schedule times:', props.schedule.times);
         if (Array.isArray(props.schedule.times)) {
             times = props.schedule.times;
         } else if (Array.isArray(props.schedule.times.data)) {
             times = props.schedule.times.data;
         }
     }
+    console.log('Normalized times:', times);
     
     const grouped = {};
     for (const [dayNum, dayName] of Object.entries(props.days)) {
