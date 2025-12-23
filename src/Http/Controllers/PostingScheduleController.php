@@ -26,20 +26,8 @@ class PostingScheduleController extends Controller
             $schedule->load('times'); // Load empty times relationship
         }
 
-        // Debug logging
-        \Log::info('PostingSchedule times count: ' . $schedule->times->count());
-        \Log::info('PostingSchedule times: ' . json_encode($schedule->times->toArray()));
-
-        $scheduleResource = new PostingScheduleResource($schedule);
-        \Log::info('PostingSchedule Resource: ' . json_encode($scheduleResource->resolve()));
-
-        $queueItems = QueueItem::with(['post.versions', 'post.accounts', 'scheduleTime'])
-            ->pending()
-            ->ordered()
-            ->get();
-
         return Inertia::render('PostingSchedule', [
-            'schedule' => (new PostingScheduleResource($schedule))->resolve(),
+            'schedule' => new PostingScheduleResource($schedule),
             'queue_items' => QueueItemResource::collection($queueItems)->resolve(),
             'days' => PostingScheduleTime::DAY_NAMES,
         ]);

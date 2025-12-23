@@ -116,14 +116,6 @@ const statusColor = (status) => {
         <PageHeader title="Posting Schedule"/>
 
         <div class="row-px">
-            <!-- Debug Info -->
-            <div class="mb-4 p-4 bg-gray-100 dark:bg-gray-800 rounded overflow-auto" style="max-height: 200px;">
-                <details>
-                    <summary class="cursor-pointer font-bold">Debug Data (Click to expand)</summary>
-                    <pre class="text-xs mt-2">{{ JSON.stringify({ schedule: schedule, days: days }, null, 2) }}</pre>
-                </details>
-            </div>
-
             <!-- Weekly Schedule -->
             <Panel>
                 <template #title>Weekly Schedule</template>
