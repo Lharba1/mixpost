@@ -39,7 +39,7 @@ class PostingScheduleController extends Controller
             ->get();
 
         return Inertia::render('PostingSchedule', [
-            'schedule' => new PostingScheduleResource($schedule),
+            'schedule' => (new PostingScheduleResource($schedule))->resolve(),
             'queue_items' => QueueItemResource::collection($queueItems)->resolve(),
             'days' => PostingScheduleTime::DAY_NAMES,
         ]);
