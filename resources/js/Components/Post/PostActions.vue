@@ -105,6 +105,20 @@ const confirmationPostNow = ref(false);
 const accounts = computed(() => {
     return usePage().props.accounts.filter(account => props.form.accounts.includes(account.id));
 })
+const addToQueue = () => {
+    isLoading.value = true;
+
+    axios.post(route('mixpost.schedule.addToQueue'), {
+        post_id: postId.value
+    }).then((response) => {
+        notify('success', 'Post added to queue');
+        router.visit(route('mixpost.schedule.index'));
+    }).catch((error) => {
+        handleValidationError(error);
+    }).finally(() => {
+        isLoading.value = false;
+    });
+}
 </script>
 <template>
     <div class="w-full flex items-center justify-end bg-stone-500 border-t border-gray-200 z-10">
@@ -148,6 +162,7 @@ const accounts = computed(() => {
                 <UpgradePro>
                     <template #trigger>
                         <WarningButton
+                            @click="addToQueue"
                             :hiddenTextOnSmallScreen="true"
                             :disabled="!canSchedule || isLoading"
                             size="md">
