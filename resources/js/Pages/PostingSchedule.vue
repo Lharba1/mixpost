@@ -222,14 +222,14 @@ const statusColor = (status) => {
                         <div class="flex gap-2">
                             <button 
                                 v-if="item.status === 'failed'"
-                                @click="retryQueueItem(item.id)"
+                                @click="retryQueueItem(item.uuid)"
                                 class="p-1 text-gray-400 hover:text-green-500"
                                 title="Retry"
                             >
                                 <ArrowPath class="w-5 h-5"/>
                             </button>
                             <button 
-                                @click="removeFromQueue(item.id)"
+                                @click="removeFromQueue(item.uuid)"
                                 class="p-1 text-gray-400 hover:text-red-500"
                                 title="Remove"
                             >
