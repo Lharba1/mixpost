@@ -12,6 +12,9 @@ const TwitterServiceForm = defineAsyncComponent(() => import("@/Components/Servi
 const FacebookServiceForm = defineAsyncComponent(() => import("@/Components/ServiceForm/FacebookServiceForm.vue"));
 const UnsplashServiceForm = defineAsyncComponent(() => import("@/Components/ServiceForm/UnsplashServiceForm.vue"));
 const TenorServiceForm = defineAsyncComponent(() => import("@/Components/ServiceForm/TenorServiceForm.vue"));
+const TikTokServiceForm = defineAsyncComponent(() => import("@/Components/ServiceForm/TikTokServiceForm.vue"));
+const PinterestServiceForm = defineAsyncComponent(() => import("@/Components/ServiceForm/PinterestServiceForm.vue"));
+const ThreadsServiceForm = defineAsyncComponent(() => import("@/Components/ServiceForm/ThreadsServiceForm.vue"));
 
 const pageTitle = 'Third Party Services';
 
@@ -48,6 +51,27 @@ const tab = ref('facebook');
                     X
                 </Tab>
 
+                <Tab @click="tab = 'tiktok'" :active="tab === 'tiktok'">
+                    <template #icon>
+                        <span class="text-lg">🎵</span>
+                    </template>
+                    TikTok
+                </Tab>
+
+                <Tab @click="tab = 'pinterest'" :active="tab === 'pinterest'">
+                    <template #icon>
+                        <span class="text-lg">📌</span>
+                    </template>
+                    Pinterest
+                </Tab>
+
+                <Tab @click="tab = 'threads'" :active="tab === 'threads'">
+                    <template #icon>
+                        <span class="text-lg">🧵</span>
+                    </template>
+                    Threads
+                </Tab>
+
                 <Tab @click="tab = 'unsplash'" :active="tab === 'unsplash'">
                     <template #icon>
                         <UnsplashIcon class="text-black"/>
@@ -71,6 +95,18 @@ const tab = ref('facebook');
 
             <template v-if="tab === 'twitter'">
                 <TwitterServiceForm :form="form.twitter"/>
+            </template>
+
+            <template v-if="tab === 'tiktok'">
+                <TikTokServiceForm :form="form.tiktok"/>
+            </template>
+
+            <template v-if="tab === 'pinterest'">
+                <PinterestServiceForm :form="form.pinterest"/>
+            </template>
+
+            <template v-if="tab === 'threads'">
+                <ThreadsServiceForm :form="form.threads"/>
             </template>
 
             <template v-if="tab === 'unsplash'">
