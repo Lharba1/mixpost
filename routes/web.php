@@ -148,7 +148,7 @@ Route::middleware([
             Route::get('/', [ContentRecyclingController::class, 'index'])->name('index');
             Route::post('/', [ContentRecyclingController::class, 'store'])->name('store');
             Route::put('{recyclingPost}', [ContentRecyclingController::class, 'update'])->name('update');
-            Route::delete('{recyclingPost}', [ContentRecyclingController::class, 'destroy'])->name('destroy');
+            Route::delete('{recyclingPost}', [ContentRecyclingController::class, 'remove'])->name('destroy');
             Route::put('{recyclingPost}/toggle', [ContentRecyclingController::class, 'toggle'])->name('toggle');
             Route::post('add-from-post', [ContentRecyclingController::class, 'addFromPost'])->name('addFromPost');
         });

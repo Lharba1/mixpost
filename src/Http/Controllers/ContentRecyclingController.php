@@ -83,7 +83,7 @@ class ContentRecyclingController extends AuthenticatedController
         ]);
     }
 
-    public function destroy(RecyclingPost $recyclingPost): RedirectResponse
+    public function remove(RecyclingPost $recyclingPost): RedirectResponse
     {
         $recyclingPost->delete();
 
