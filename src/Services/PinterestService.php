@@ -3,27 +3,38 @@
 namespace Inovector\Mixpost\Services;
 
 use Inovector\Mixpost\Abstracts\Service;
+use Inovector\Mixpost\Enums\ServiceGroup;
 
 class PinterestService extends Service
 {
-    public static function name(): string
+    public static array $exposedFormAttributes = [];
+
+    public static function group(): ServiceGroup
     {
-        return 'pinterest';
+        return ServiceGroup::SOCIAL;
     }
 
-    public static function credentialsFormSchema(): array
+    static function form(): array
     {
         return [
-            'client_id' => [
-                'label' => 'App ID',
-                'type' => 'text',
-                'required' => true,
-            ],
-            'client_secret' => [
-                'label' => 'App Secret',
-                'type' => 'text',
-                'required' => true,
-            ],
+            'client_id' => '',
+            'client_secret' => '',
+        ];
+    }
+
+    public static function formRules(): array
+    {
+        return [
+            'client_id' => ['required'],
+            'client_secret' => ['required'],
+        ];
+    }
+
+    public static function formMessages(): array
+    {
+        return [
+            'client_id' => 'The App ID is required.',
+            'client_secret' => 'The App Secret is required.',
         ];
     }
 }

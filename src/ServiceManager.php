@@ -15,6 +15,9 @@ use Inovector\Mixpost\Services\FacebookService;
 use Inovector\Mixpost\Services\TenorService;
 use Inovector\Mixpost\Services\TwitterService;
 use Inovector\Mixpost\Services\UnsplashService;
+use Inovector\Mixpost\Services\TikTokService;
+use Inovector\Mixpost\Services\PinterestService;
+use Inovector\Mixpost\Services\ThreadsService;
 use Inovector\Mixpost\Support\Log;
 
 class ServiceManager
@@ -34,6 +37,9 @@ class ServiceManager
             TwitterService::class,
             UnsplashService::class,
             TenorService::class,
+            TikTokService::class,
+            PinterestService::class,
+            ThreadsService::class,
         ];
     }
 
