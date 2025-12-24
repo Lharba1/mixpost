@@ -68,11 +68,11 @@ class PostingScheduleController extends Controller
         return redirect()->back();
     }
 
-    public function toggleTimeSlot(PostingScheduleTime $time): HttpResponse
+    public function toggleTimeSlot(PostingScheduleTime $time): RedirectResponse
     {
         $time->update(['is_active' => !$time->is_active]);
 
-        return response()->noContent();
+        return redirect()->back();
     }
 
     /**
