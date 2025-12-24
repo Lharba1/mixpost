@@ -33,6 +33,11 @@ class PostVersionResource extends JsonResource
         return request()->route()->getName() === 'mixpost.calendar';
     }
 
+    protected function isSchedulePage(): bool
+    {
+        return request()->route()->getName() === 'mixpost.schedule.index';
+    }
+
     protected function content(): Collection
     {
         $items = $this->content_with_relations ?? $this->content;
@@ -55,6 +60,10 @@ class PostVersionResource extends JsonResource
 
             if ($this->isCalendarPage()) {
                 $data['excerpt'] = Str::limit(Util::removeHtmlTags($item['body']), 50);
+            }
+
+            if ($this->isSchedulePage()) {
+                $data['excerpt'] = Str::limit(Util::removeHtmlTags($item['body']), 80);
             }
 
             return $data;

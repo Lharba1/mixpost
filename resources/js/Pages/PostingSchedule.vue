@@ -205,7 +205,7 @@ const statusColor = (status) => {
                         
                         <div class="flex-1 min-w-0">
                             <p class="text-sm font-medium text-gray-900 dark:text-gray-100 truncate">
-                                {{ item.post?.versions?.[0]?.content?.[0]?.body?.substring(0, 80) || 'No content' }}...
+                                {{ item.post?.versions?.[0]?.content?.[0]?.excerpt || item.post?.versions?.[0]?.content?.[0]?.body || 'No content' }}
                             </p>
                             <p class="text-xs text-gray-500 mt-1">
                                 Scheduled: {{ item.scheduled_at_formatted || 'Pending assignment' }}
