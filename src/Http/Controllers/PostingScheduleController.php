@@ -3,6 +3,7 @@
 namespace Inovector\Mixpost\Http\Controllers;
 
 use Illuminate\Http\RedirectResponse;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response as HttpResponse;
 use Illuminate\Routing\Controller;
@@ -77,7 +78,7 @@ class PostingScheduleController extends Controller
     /**
      * Add a post to the queue
      */
-    public function addToQueue(Request $request): HttpResponse
+    public function addToQueue(Request $request): JsonResponse
     {
         try {
             $validated = $request->validate([
