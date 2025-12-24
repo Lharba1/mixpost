@@ -56,13 +56,10 @@ class PostVersionResource extends JsonResource
 
             if ($this->isIndexPage()) {
                 $data['excerpt'] = Str::limit(Util::removeHtmlTags($item['body']), 150);
-            }
-
-            if ($this->isCalendarPage()) {
+            } elseif ($this->isCalendarPage()) {
                 $data['excerpt'] = Str::limit(Util::removeHtmlTags($item['body']), 50);
-            }
-
-            if ($this->isSchedulePage()) {
+            } else {
+                // Always include excerpt for other pages (schedule, queue, etc.)
                 $data['excerpt'] = Str::limit(Util::removeHtmlTags($item['body']), 80);
             }
 
