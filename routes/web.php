@@ -43,6 +43,7 @@ use Inovector\Mixpost\Http\Controllers\WebhookController;
 use Inovector\Mixpost\Http\Controllers\ApiTokenController;
 use Inovector\Mixpost\Http\Controllers\BrandingController;
 use Inovector\Mixpost\Http\Controllers\WorkspaceController;
+use Inovector\Mixpost\Http\Controllers\ContentRecyclingController;
 use Inovector\Mixpost\Http\Middleware\Auth as MixpostAuthMiddleware;
 use Inovector\Mixpost\Http\Middleware\HandleInertiaRequests;
 
@@ -54,7 +55,8 @@ Route::middleware([
     ->name('mixpost.')
     ->group(function () {
         Route::get('/', DashboardController::class)->name('dashboard');
-        Route::get('reports', ReportsController::class)->name('reports');
+        Route::get('reports', [ReportsController::class, 'index'])->name('reports');
+        Route::get('reports/export', [ReportsController::class, 'export'])->name('reports.export');
 
         Route::prefix('accounts')->name('accounts.')->group(function () {
             Route::get('/', [AccountsController::class, 'index'])->name('index');
@@ -140,6 +142,15 @@ Route::middleware([
             Route::put('queue/reorder', [PostingScheduleController::class, 'reorderQueue'])->name('reorderQueue');
             Route::put('queue/{queueItem}/retry', [PostingScheduleController::class, 'retryQueueItem'])->name('retryQueueItem');
             Route::get('stats', [PostingScheduleController::class, 'stats'])->name('stats');
+        });
+
+        Route::prefix('recycling')->name('recycling.')->group(function () {
+            Route::get('/', [ContentRecyclingController::class, 'index'])->name('index');
+            Route::post('/', [ContentRecyclingController::class, 'store'])->name('store');
+            Route::put('{recyclingPost}', [ContentRecyclingController::class, 'update'])->name('update');
+            Route::delete('{recyclingPost}', [ContentRecyclingController::class, 'destroy'])->name('destroy');
+            Route::put('{recyclingPost}/toggle', [ContentRecyclingController::class, 'toggle'])->name('toggle');
+            Route::post('add-from-post', [ContentRecyclingController::class, 'addFromPost'])->name('addFromPost');
         });
 
         Route::prefix('ai')->name('ai.')->group(function () {

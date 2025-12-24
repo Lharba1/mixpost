@@ -28,7 +28,10 @@ class Media extends Model
         'path',
         'size',
         'size_total',
-        'conversions'
+        'conversions',
+        'alt_text',
+        'thumbnail_path',
+        'thumbnail_disk',
     ];
 
     protected $casts = [
