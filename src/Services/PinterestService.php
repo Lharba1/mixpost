@@ -14,6 +14,11 @@ class PinterestService extends Service
         return ServiceGroup::SOCIAL;
     }
 
+    public static function name(): string
+    {
+        return 'pinterest';
+    }
+
     static function form(): array
     {
         return [

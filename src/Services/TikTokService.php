@@ -14,6 +14,11 @@ class TikTokService extends Service
         return ServiceGroup::SOCIAL;
     }
 
+    public static function name(): string
+    {
+        return 'tiktok';
+    }
+
     static function form(): array
     {
         return [

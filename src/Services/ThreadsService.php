@@ -14,6 +14,11 @@ class ThreadsService extends Service
         return ServiceGroup::SOCIAL;
     }
 
+    public static function name(): string
+    {
+        return 'threads';
+    }
+
     static function form(): array
     {
         return [
